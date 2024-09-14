@@ -1,0 +1,11 @@
+dotenv (Para acceder a las variables en .env)
+
+express
+
+prisma
+
+Joi (Para los serializadores)
+
+express-asyn-handler
+
+jsonwebtoken

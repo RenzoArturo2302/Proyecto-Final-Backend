@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tabla Usuario
+model Usuario {
+  id         String  @id @default(uuid()) @db.Uuid
+  nombre     String
+  apellido   String
+  habilitado Boolean @default(true)
+  email      String  @unique
+  password   String
+  rol        ROL     @default(CLIENTE)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  Venta     Venta[]
+
+  @@map("usuarios")
+}
+
+// Tabla venta
+model Venta {
+  id         String       @id @default(uuid()) @db.Uuid
+  // fechaVenta DateTime?    @map("fecha_venta") @db.Date
+  metodoPago METODO_PAGO? @default(NO_PAGADO) @map("metodo_pago")
+  total      Float?       @default(0)
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+
+  usuarioId String? @map("usuario_id") @db.Uuid
+
+  usuario       Usuario?        @relation(fields: [usuarioId], references: [id])
+  DetallesVenta DetallesVenta[]
+
+  @@map("ventas")
+}
+
+model DetallesVenta {
+  id       String @id @default(uuid()) @db.Uuid
+  cantidad Int
+
+  ventaId    String? @map("venta_id") @db.Uuid
+  productoId String? @map("producto_id") @db.Uuid
+
+  producto Producto? @relation(fields: [productoId], references: [id])
+  venta    Venta?    @relation(fields: [ventaId], references: [id])
+
+  @@unique([ventaId, productoId])
+  @@map("detallesVenta")
+}
+
+model Producto {
+  id          String   @id @default(uuid()) @db.Uuid
+  stock       Int
+  precio      Float
+  descripcion String?
+  imagenUrl   String?  @map("imagen_url")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  // Agregar imagen
+
+  tipoProductoId String? @map("tipo_producto_id") @db.Uuid
+  marcaId        String? @map("marca_id") @db.Uuid
+  sucursalId     String? @map("sucursal_id") @db.Uuid
+
+  tipoProducto  TipoProducto?   @relation(fields: [tipoProductoId], references: [id])
+  marca         Marca?          @relation(fields: [marcaId], references: [id])
+  sucursal      Sucursal?       @relation(fields: [sucursalId], references: [id])
+  DetallesVenta DetallesVenta[]
+
+  @@map("productos")
+}
+
+model TipoProducto {
+  id       String     @id @default(uuid()) @db.Uuid
+  nombre   String     @unique @db.Text
+  Producto Producto[]
+
+  @@map("tipo_productos")
+}
+
+model Marca {
+  id       String     @id @default(uuid()) @db.Uuid
+  nombre   String     @unique @db.Text
+  Producto Producto[]
+
+  @@map("marcas")
+}
+
+model Sucursal {
+  id           String        @id @default(uuid()) @db.Uuid
+  nombre       String        @unique @db.Text
+  direccion    String?
+  telefono     String?
+  tipoSucursal TIPO_SUCURSAL @default(ARTICULOS_PARA_EL_HOGAR) @map("tipo_sucursal")
+  Producto     Producto[]
+
+  @@map("sucursal")
+}
+
+enum ROL {
+  CLIENTE
+  ADMIN
+}
+
+enum METODO_PAGO {
+  YAPE
+  VISA
+  EFECTIVO
+  NO_PAGADO
+}
+
+enum TIPO_SUCURSAL {
+  ARTICULOS_PARA_EL_HOGAR
+  MOTOS_Y_REPUESTOS
+}

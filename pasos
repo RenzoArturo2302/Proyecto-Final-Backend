@@ -1,0 +1,7 @@
+1. Iniciar proyecto Node con npm init para generar el package.json
+2. Instalar Express con npm install express -save (Framework utilizado)
+3. Instalar nodemon npm install --save-dev nodemon
+4. Instalar Prisma npm install prisma --save-dev (ORM)
+5. Inicializar Prisma npx prisma init
+6. Instalar Prisma Cliente npm install @prisma/client
+7. Generar las tablas y migraciones npx prisma migrate dev --name init
