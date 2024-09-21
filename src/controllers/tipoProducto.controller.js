@@ -20,7 +20,7 @@ export const registrarTipoProducto = async (req, res) => {
   });
 
   return res.status(201).json({
-    message: "tipoProducto creada exitosamente",
+    message: "tipo de producto creado exitosamente",
     content: tipoProductoCreado,
   });
 };

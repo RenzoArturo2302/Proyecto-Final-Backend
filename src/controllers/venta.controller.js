@@ -155,7 +155,39 @@ export const eliminarVentaWithId = async (req, res) => {
 };
 
 // Proceder compra (Update Metodo de pago)
+export const updateVenta = async (req, res) => {
+  const { id } = req.params;
+  const { error, value } = RegistrarVentaSerializer.validate(req.body);
+  const user = req.usuario;
 
+  const foundVenta = await conexion.venta.findFirst({
+    where: { id: id },
+    select: { usuarioId: true, id: true },
+  });
+
+  if (!foundVenta) {
+    return res.status(400).json({
+      message: "No exite ese venta",
+    });
+  }
+
+  if (user.rol === ROL.ADMIN || foundVenta.usuarioId === user.id) {
+    const updatedVenta = await conexion.producto.update({
+      where: { id: foundVenta.id },
+      data: {
+        ...value,
+      },
+    });
+    return res.json({
+      message: "Venta modificada",
+      content: updatedVenta,
+    });
+  } else {
+    return res.status(400).json({
+      message: "No puede modificar una venta que no le pertenece",
+    });
+  }
+};
 // Cancelar compra (Borrar venta)
 
 // Ver compras generales (solo admin)

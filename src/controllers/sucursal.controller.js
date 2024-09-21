@@ -22,7 +22,7 @@ export const registrarSucursal = async (req, res) => {
   });
 
   return res.status(201).json({
-    message: "Usuario creado exitosamente",
+    message: "Sucursal creada exitosamente",
     content: sucursalCreada,
   });
 };

@@ -5,9 +5,9 @@ export const RegistrarProductoSerializer = Joi.object({
   precio: Joi.number().required(),
   descripcion: Joi.string().optional(),
   imagenUrl: Joi.string().optional(),
-  tipoProductoId: Joi.string().optional(),
-  marcaId: Joi.string().optional(),
-  sucursalId: Joi.string().optional(),
+  tipoProductoId: Joi.string().required(),
+  marcaId: Joi.string().required(),
+  sucursalId: Joi.string().required(),
 });
 
 export const ProductoSerializer = Joi.object({
